@@ -11,6 +11,8 @@ export default function Bokeh() {
             <circle cx="35%" cy="25%" r="20%"   />
             <circle cx="90%" cy="-25%" r="35%"  />
             <circle cx="-15%" cy="30%" r="30%"  />
+            <circle cx="65%" cy="85%" r="55%"   />
+            <circle cx="45%" cy="50%" r="20%"   />
         </svg>
     )
 }

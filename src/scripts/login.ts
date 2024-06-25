@@ -12,7 +12,9 @@ export async function loginOnClick() {
     } else {
         const accessToken = await getAccessToken(clientId, code);
         const profile = await fetchProfile(accessToken ?? "");
-        console.log(profile);
+        const top = await fetchTop(accessToken ?? "");
+        console.log(profile); // working
+        console.log(top); // working
         populateUI(profile);
     }
 }
@@ -24,6 +26,17 @@ async function fetchProfile(code: string): Promise<UserProfile> {
     });
 
     return await result.json();
+}
+
+/*
+Function to fetch user's top artists/songs
+*/
+async function fetchTop(code: string) {
+    const result = await fetch("https://api.spotify.com/v1/me/top/artists", {
+        method: "GET", headers: { Authorization: `Bearer ${code}`}
+    });
+
+    return await result.json()
 }
 
 function populateUI(profile: UserProfile) {

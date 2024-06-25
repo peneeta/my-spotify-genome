@@ -3,7 +3,7 @@ import { loginOnClick } from "../scripts/login";
 import Bokeh from "./bokeh";
 
 // HERE func TEST
-loginOnClick();
+// loginOnClick();
 
 export default function Login() {
 
@@ -13,8 +13,9 @@ export default function Login() {
 
             <div className="content flex flex-col justify-center align-center items-center" style={{height:"100vh"}}>
                 <h1 className="title py-4">My Spotify Genome</h1>
+                <h2>Generate your musical DNA</h2>
 
-                <a id="login" className="text-white bg-spotify-green hover:bg-spotify-dark-green font-medium rounded-full text-base px-8 py-3 dark:bg-spotify-green my-3">Login with Spotify</a>
+                <a onClick={loginOnClick} id="login" className="text-white bg-spotify-green hover:bg-spotify-dark-green font-medium rounded-full text-base px-8 py-3 dark:bg-spotify-green my-3">Login with Spotify</a>
 
                 <section id="profile">
                     <h2>Logged in as <span id="displayName"></span></h2>
@@ -27,6 +28,11 @@ export default function Login() {
                         <li>Profile Image: <span id="imgUrl"></span></li>
                     </ul>
                 </section>
+
+                <div className="section">
+                    <h2>Top Songs This Month</h2>
+
+                </div>
             </div>
         
 
