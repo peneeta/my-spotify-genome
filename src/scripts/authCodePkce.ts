@@ -1,4 +1,5 @@
 /*
+redirectToAuthCodeFlow
 Function to redirect to Spotify authorization
 Input: clientId - the ID given upon creation of spotify app
 Output: None
@@ -20,6 +21,13 @@ export async function redirectToAuthCodeFlow(clientId: string) {
     document.location = `https://accounts.spotify.com/authorize?${params.toString()}`;
 }
 
+/*
+getAccessToken
+Function that generates an access token based on the clientId (given by Spotify) and the generated code from URLSearchParams. Refreshes the token if an error persists
+
+Input: ClientId, code :string
+Output: AccessToken
+*/
 export async function getAccessToken(clientId: string, code: string) {
     const verifier = localStorage.getItem("verifier");
 
@@ -49,6 +57,10 @@ export async function getAccessToken(clientId: string, code: string) {
     return localStorage.getItem('access_token');
 }
 
+/*
+generateCodeVerifier and generateCodeChallenge are used for PKCE authorization.
+This type of authorization is client side (does not need the server-side secret key) Functions obtained from https://developer.spotify.com/documentation/web-api/howtos/web-app-profile 
+*/
 function generateCodeVerifier(length: number) {
     let text = '';
     let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -70,6 +82,7 @@ async function generateCodeChallenge(codeVerifier: string) {
 
 /*
 Function to generate a new refresh token if one expires
+See https://developer.spotify.com/documentation/web-api/tutorials/refreshing-tokens 
 */
 export async function getRefreshToken(clientId: string) {
 
