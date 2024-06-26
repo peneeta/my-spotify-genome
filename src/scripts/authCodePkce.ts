@@ -1,3 +1,6 @@
+// CONSTANTS
+const loginPage = "http://localhost:5173/";
+
 /*
 redirectToAuthCodeFlow
 Function to redirect to Spotify authorization
@@ -13,10 +16,10 @@ export async function redirectToAuthCodeFlow(clientId: string) {
     const params = new URLSearchParams();
     params.append("client_id", clientId);
     params.append("response_type", "code");
-    params.append("redirect_uri", "http://localhost:5173/callback");
-    params.append("scope", "user-read-private user-top-read user-read-email");
+    params.append("scope", "user-read-private user-top-read");
     params.append("code_challenge_method", "S256");
     params.append("code_challenge", challenge);
+    params.append("redirect_uri", "http://localhost:5173/callback");
 
     document.location = `https://accounts.spotify.com/authorize?${params.toString()}`;
 }
@@ -28,34 +31,46 @@ Function that generates an access token based on the clientId (given by Spotify)
 Input: ClientId, code :string
 Output: AccessToken
 */
-export async function getAccessToken(clientId: string, code: string) {
-    const verifier = localStorage.getItem("verifier");
+export async function getAccessToken(clientId: string) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const authCode = urlParams.get("code");
 
-    const params = new URLSearchParams();
-    params.append("client_id", clientId);
-    params.append("grant_type", "authorization_code");
-    params.append("code", code);
-    params.append("redirect_uri", "http://localhost:5173/callback");
-    params.append("code_verifier", verifier!);
+    if (!authCode) {
+        redirectToAuthCodeFlow(clientId);
+    } else {
+      const verifier = localStorage.getItem("verifier");
+      console.log("Verifier found", verifier);
+      console.log("Code is", authCode); // this works
 
-    await fetch("https://accounts.spotify.com/api/token", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: params
-    }).then(async (response) => {
-        if (response.ok) {
-            const result = await response.json();
-            console.log(result) // check
-            localStorage.setItem('access_token', result.access_token);
-            localStorage.setItem('refresh_token', result.refresh_token)
+      const body = new URLSearchParams({
+        client_id: clientId,
+        grant_type: 'authorization_code',
+        code: authCode,
+        redirect_uri: 'http://localhost:5173/callback',
+        code_verifier: String(verifier),
+      });
+
+        try {
+          const response = await fetch('https://accounts.spotify.com/api/token', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: body.toString(),
+          });
+
+          if (!response.ok) {
+            const errorDetails = await response.json();
+            throw new Error(`Error: ${response.status} - ${errorDetails.error} - ${errorDetails.error_description}`)
+          }
+
+          const data = await response.json();
+          return data
+        } catch (error) {
+          console.error('Failed to fetch access token:', error);
         }
-    }).catch((error: any) => {
-        console.log(error) // log error message
-        getRefreshToken(clientId); // refresh token
-    })
 
-    return localStorage.getItem('access_token');
-}
+        }}
 
 /*
 generateCodeVerifier and generateCodeChallenge are used for PKCE authorization.
@@ -90,22 +105,24 @@ export async function getRefreshToken(clientId: string) {
     const refreshToken = localStorage.getItem('refresh_token');
     const url = "https://accounts.spotify.com/api/token";
 
+    console.log("refresh token", refreshToken);
+    
     const payload = {
         method: 'POST',
         headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
-       },
-       body: new URLSearchParams({
-         grant_type: 'refresh_token',
-         refresh_token: refreshToken ?? "",
-         client_id: clientId
-       }),
-     }
+        },
+        body: new URLSearchParams({
+            grant_type: 'refresh_token',
+            refresh_token: refreshToken ?? "",
+            client_id: clientId
+        }),
+        }
 
-     // make a new request to get a new access token, should work
-     const body = await fetch(url, payload);
-     const response = await body.json();
- 
-     localStorage.setItem('access_token', response.accessToken);
-     localStorage.setItem('refresh_token', response.refreshToken);
+        // make a new request to get a new access token, should work
+        const body = await fetch(url, payload);
+        const response = await body.json();
+    
+        localStorage.setItem('access_token', response.accessToken);
+        localStorage.setItem('refresh_token', response.refreshToken);
    };
