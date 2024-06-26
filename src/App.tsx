@@ -1,26 +1,26 @@
-import { useEffect, useState } from 'react'
-import { redirectToAuthCodeFlow, getRefreshToken, getAccessToken } from "./scripts/authCodePkce";
+// import { useEffect, useState } from 'react'
+// import { getAccessToken } from "./scripts/authCodePkce";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css'
 
 import Login from './components/Login'
+import Authorization from './components/Authorization';
+import Callback from './components/Callback';
 
-// API Constants
-const clientId = 'e3dc42cfeb2b4fb0bb03369b39d757e5'
 
 function App() {
-  const [accessToken, setAccessToken] = useState("");
-
-  useEffect(() => {
-    getAccessToken(clientId)
-    
-  }, [])
-
-
 
   return (
-    <>
-        <Login />
-    </>
+    <div>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Authorization />} />
+          <Route path="/callback" element={<Callback />} />
+        </Routes>
+      </BrowserRouter>
+    </div>
+
+
   )
 }
 

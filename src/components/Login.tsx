@@ -10,8 +10,6 @@ export default function Login() {
                 <h1 className="title py-4">My Spotify Genome</h1>
                 <h2>Generate your musical DNA</h2>
 
-                <a id="login" className="text-white bg-spotify-green hover:bg-spotify-dark-green font-medium rounded-full text-base px-8 py-3 dark:bg-spotify-green my-3">Login with Spotify</a>
-
                 <section id="profile">
                     <h2>Logged in as <span id="displayName"></span></h2>
                     <span id="avatar"></span>

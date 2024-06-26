@@ -1,6 +1,3 @@
-// CONSTANTS
-const loginPage = "http://localhost:5173/";
-
 /*
 redirectToAuthCodeFlow
 Function to redirect to Spotify authorization
@@ -36,11 +33,26 @@ export async function getAccessToken(clientId: string) {
     const authCode = urlParams.get("code");
 
     if (!authCode) {
-        redirectToAuthCodeFlow(clientId);
+        //redirectToAuthCodeFlow(clientId);
+        console.log("auth code not found");
+        return null
     } else {
       const verifier = localStorage.getItem("verifier");
+
+      if (!verifier) {
+        console.error("Verifier not found in local storage.");
+        return null;
+      }
+
       console.log("Verifier found", verifier);
       console.log("Code is", authCode); // this works
+
+      // check if AuthCode has been used
+      const authCodeUsed = localStorage.getItem("auth_code_used");
+      if (authCodeUsed == authCode) {
+        console.warn("Auth code has already been used");
+        return;
+      }
 
       const body = new URLSearchParams({
         client_id: clientId,
@@ -65,7 +77,19 @@ export async function getAccessToken(clientId: string) {
           }
 
           const data = await response.json();
+          console.log("Access token response data:", data)
+          localStorage.setItem('access_token', data.access_token);
+
+          // mark the auth code as used
+          localStorage.setItem("auth_code_used", authCode);
+
+          // clear the code from the URL
+          const newUrl = new URL(window.location.href);
+          newUrl.searchParams.delete('code');
+          window.history.replaceState({}, document.title, newUrl.toString());
+
           return data
+
         } catch (error) {
           console.error('Failed to fetch access token:', error);
         }
@@ -119,10 +143,18 @@ export async function getRefreshToken(clientId: string) {
         }),
         }
 
-        // make a new request to get a new access token, should work
-        const body = await fetch(url, payload);
-        const response = await body.json();
-    
-        localStorage.setItem('access_token', response.accessToken);
-        localStorage.setItem('refresh_token', response.refreshToken);
+        try {
+            const body = await fetch(url, payload);
+            const response = await body.json();
+        
+            localStorage.setItem('access_token', response.accessToken);
+            localStorage.setItem('refresh_token', response.refreshToken);
+
+            return response
+        } catch (error) {
+            console.error("Failed to refresh token:", error);
+        }
+
+        // make a new request to get a new access token
+
    };
