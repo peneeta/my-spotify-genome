@@ -14,35 +14,37 @@ export default function Authorization() {
 
     useEffect(() => {
         const authenticate = async () => {
-            let accessToken = localStorage.getItem('access_token');
-
-            if (!accessToken) {
-                const data = await getAccessToken(clientId);
-                if (data) {
-                    accessToken = data.access_token;
-                    setIsAuthenticated(true);
-                }
+            const refreshToken = localStorage.getItem('refresh_token');
+            if (refreshToken) {
+                getRefreshToken(clientId);
             } else {
-                setIsAuthenticated(true)
-            }
+                let accessToken = localStorage.getItem('access_token');
 
-            if (accessToken) {
-                // check if access token is expired
-                const tokenExpiry = localStorage.getItem('token_expiry');
-
-                if (tokenExpiry && Date.now() >= parseInt(tokenExpiry)) {
-                    console.log("Token expired. Refreshing...")
-                    const refreshedData = await getRefreshToken(clientId);
-
-                    if (refreshedData) {
-                        accessToken = refreshedData.access_token;
+                if (!accessToken) {
+                    const data = await getAccessToken(clientId);
+                    if (data) {
+                        accessToken = data.access_token;
+                        setIsAuthenticated(true);
                     }
-
+                } else {
+                    setIsAuthenticated(true)
                 }
-            }
-            
-
-            
+    
+                if (accessToken) {
+                    // check if access token is expired
+                    const tokenExpiry = localStorage.getItem('token_expiry');
+    
+                    if (tokenExpiry && Date.now() >= parseInt(tokenExpiry)) {
+                        console.log("Token expired. Refreshing...")
+                        const refreshedData = await getRefreshToken(clientId);
+    
+                        if (refreshedData) {
+                            accessToken = refreshedData.access_token;
+                        }
+    
+                    }
+                }
+            }    
         };
 
         authenticate();

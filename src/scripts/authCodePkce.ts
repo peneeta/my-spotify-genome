@@ -161,13 +161,9 @@ export async function getRefreshToken(clientId: string) {
             
             const data = await response.json();
             console.log("Refreshed access token response data:", data);
-            localStorage.setItem('access_token', data.accessToken);
-
-            if (data.refresh_token) {
-                localStorage.setItem('refresh_token', data.refreshToken);
-            }
+            localStorage.setItem('access_token', data.access_token);
+            localStorage.setItem('refresh_token', data.refresh_token);
             
-
             return data;
         } catch (error) {
             console.error("Failed to refresh token:", error);

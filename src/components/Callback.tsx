@@ -1,25 +1,43 @@
-import { useEffect } from "react";
-import { getAccessToken } from "../scripts/authCodePkce";
+import { useEffect, useState } from "react";
+import { getAccessToken, getRefreshToken } from "../scripts/authCodePkce";
 import Bokeh from "./Bokeh";
+import { fetchTopTracks } from "../scripts/apiQueryFuncs";
 
 
 const clientId = 'e3dc42cfeb2b4fb0bb03369b39d757e5';
 
+
 const Callback = () => {
+    const [topSongsMonth, setTopSongsMonth] = useState([]);
+
     useEffect(() => {
         const fetchAccessToken = async () => {
             const data = await getAccessToken(clientId);
             if (data) {
+                const accessToken = data.access_token;
                 console.log("Access token data:", data);
+
+                // Get user's topSongs of the month
+                const topSongsData = await fetchTopTracks(accessToken);
+
+                if (topSongsData) {
+                    console.log("Top Songs", topSongsData);
+                    setTopSongsMonth(topSongsData.items);
+                }
+
+            } else {
+                getRefreshToken(clientId);
+                console.log("REFRESHED TOKEN");
             }
         };
+        
         fetchAccessToken();
     }, []);
 
     return (
         <div>
             <Bokeh/>
-            
+
             <h1>Callback Handling</h1>
             <h2>Processing authentication</h2>
 
