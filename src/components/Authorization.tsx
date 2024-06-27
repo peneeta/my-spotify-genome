@@ -1,24 +1,51 @@
-import { useEffect } from "react";
-import { redirectToAuthCodeFlow, getAccessToken } from "../scripts/authCodePkce";
+import { useEffect, useState } from "react";
+import { redirectToAuthCodeFlow, getAccessToken, getRefreshToken } from "../scripts/authCodePkce";
 import Bokeh from "./Bokeh"
 
 const clientId = 'e3dc42cfeb2b4fb0bb03369b39d757e5';
 
 export default function Authorization() {
+
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
     const handleAuthClick = () => {
         redirectToAuthCodeFlow(clientId);
     };
 
     useEffect(() => {
-        const fetchAccessToken = async () => {
-            const data = await getAccessToken(clientId);
+        const authenticate = async () => {
+            let accessToken = localStorage.getItem('access_token');
 
-            if (data) {
-                console.log("Access Token data:", data);
+            if (!accessToken) {
+                const data = await getAccessToken(clientId);
+                if (data) {
+                    accessToken = data.access_token;
+                    setIsAuthenticated(true);
+                }
+            } else {
+                setIsAuthenticated(true)
             }
+
+            if (accessToken) {
+                // check if access token is expired
+                const tokenExpiry = localStorage.getItem('token_expiry');
+
+                if (tokenExpiry && Date.now() >= parseInt(tokenExpiry)) {
+                    console.log("Token expired. Refreshing...")
+                    const refreshedData = await getRefreshToken(clientId);
+
+                    if (refreshedData) {
+                        accessToken = refreshedData.access_token;
+                    }
+
+                }
+            }
+            
+
+            
         };
 
-        fetchAccessToken();
+        authenticate();
     }, []);
 
     return (

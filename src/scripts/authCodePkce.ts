@@ -79,6 +79,8 @@ export async function getAccessToken(clientId: string) {
           const data = await response.json();
           console.log("Access token response data:", data)
           localStorage.setItem('access_token', data.access_token);
+          localStorage.setItem('token_expiry', String(Date.now() + data.expires_in * 1000));
+          localStorage.setItem('refresh_token', data.refresh_token);
 
           // mark the auth code as used
           localStorage.setItem("auth_code_used", authCode);
@@ -127,30 +129,46 @@ export async function getRefreshToken(clientId: string) {
 
     // refresh token that has been previously stored
     const refreshToken = localStorage.getItem('refresh_token');
+
+    if (!refreshToken) {
+        console.error('Refresh token not found.');
+        return null;
+    }
     const url = "https://accounts.spotify.com/api/token";
 
     console.log("refresh token", refreshToken);
-    
-    const payload = {
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: new URLSearchParams({
-            grant_type: 'refresh_token',
-            refresh_token: refreshToken ?? "",
-            client_id: clientId
-        }),
-        }
+
+    const body = new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: String(refreshToken),
+        client_id: clientId
+    });
 
         try {
-            const body = await fetch(url, payload);
-            const response = await body.json();
-        
-            localStorage.setItem('access_token', response.accessToken);
-            localStorage.setItem('refresh_token', response.refreshToken);
+            const response = await fetch('https://accounts.spotify.com/api/token', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: body.toString(),
+            });
 
-            return response
+
+            if (!response.ok) {
+                const errorDetails = await response.json();
+                throw new Error(`Error: ${response.status} - ${errorDetails.error} - ${errorDetails.error_description}`)
+            }
+            
+            const data = await response.json();
+            console.log("Refreshed access token response data:", data);
+            localStorage.setItem('access_token', data.accessToken);
+
+            if (data.refresh_token) {
+                localStorage.setItem('refresh_token', data.refreshToken);
+            }
+            
+
+            return data;
         } catch (error) {
             console.error("Failed to refresh token:", error);
         }
