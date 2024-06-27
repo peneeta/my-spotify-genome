@@ -33,7 +33,6 @@ export async function getAccessToken(clientId: string) {
     const authCode = urlParams.get("code");
 
     if (!authCode) {
-        //redirectToAuthCodeFlow(clientId);
         console.log("auth code not found");
         return null
     } else {
@@ -43,9 +42,6 @@ export async function getAccessToken(clientId: string) {
         console.error("Verifier not found in local storage.");
         return null;
       }
-
-      console.log("Verifier found", verifier);
-      console.log("Code is", authCode); // this works
 
       // check if AuthCode has been used
       const authCodeUsed = localStorage.getItem("auth_code_used");
@@ -63,24 +59,7 @@ export async function getAccessToken(clientId: string) {
       });
 
         try {
-          const response = await fetch('https://accounts.spotify.com/api/token', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: body.toString(),
-          });
-
-          if (!response.ok) {
-            const errorDetails = await response.json();
-            throw new Error(`Error: ${response.status} - ${errorDetails.error} - ${errorDetails.error_description}`)
-          }
-
-          const data = await response.json();
-          console.log("Access token response data:", data)
-          localStorage.setItem('access_token', data.access_token);
-          localStorage.setItem('token_expiry', String(Date.now() + data.expires_in * 1000));
-          localStorage.setItem('refresh_token', data.refresh_token);
+          const data = setTokens(body);
 
           // mark the auth code as used
           localStorage.setItem("auth_code_used", authCode);
@@ -134,9 +113,6 @@ export async function getRefreshToken(clientId: string) {
         console.error('Refresh token not found.');
         return null;
     }
-    const url = "https://accounts.spotify.com/api/token";
-
-    console.log("refresh token", refreshToken);
 
     const body = new URLSearchParams({
         grant_type: 'refresh_token',
@@ -145,30 +121,40 @@ export async function getRefreshToken(clientId: string) {
     });
 
         try {
-            const response = await fetch('https://accounts.spotify.com/api/token', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: body.toString(),
-            });
-
-
-            if (!response.ok) {
-                const errorDetails = await response.json();
-                throw new Error(`Error: ${response.status} - ${errorDetails.error} - ${errorDetails.error_description}`)
-            }
-            
-            const data = await response.json();
-            console.log("Refreshed access token response data:", data);
-            localStorage.setItem('access_token', data.access_token);
-            localStorage.setItem('refresh_token', data.refresh_token);
-            
-            return data;
+            return setTokens(body);
         } catch (error) {
             console.error("Failed to refresh token:", error);
         }
-
-        // make a new request to get a new access token
-
    };
+
+/*
+Function that makes the fetch call to Spotify's token endpoint. Sets access token, refresh token, and expiry date
+*/
+async function setTokens(body: URLSearchParams) {
+  try {
+    const response = await fetch('https://accounts.spotify.com/api/token', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: body.toString(),
+    });
+
+
+    if (!response.ok) {
+        const errorDetails = await response.json();
+        throw new Error(`Error: ${response.status} - ${errorDetails.error} - ${errorDetails.error_description}`)
+    }
+    
+    const data = await response.json();
+    console.log("Access token response data:", data);
+    localStorage.setItem('access_token', data.access_token);
+    localStorage.setItem('refresh_token', data.refresh_token);
+    localStorage.setItem('token_expiry', String(Date.now() + data.expires_in * 1000));
+
+    
+    return data;
+  } catch (error) {
+      console.error("Failed to refresh token:", error);
+  }
+}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getAccessToken, getRefreshToken } from "../scripts/authCodePkce";
 import Bokeh from "./Bokeh";
-import { fetchTopTracks } from "../scripts/apiQueryFuncs";
+import { fetchProfile, fetchTopTracks, populateUI } from "../scripts/apiQueryFuncs";
 
 
 const clientId = 'e3dc42cfeb2b4fb0bb03369b39d757e5';
@@ -13,12 +13,18 @@ const Callback = () => {
     useEffect(() => {
         const fetchAccessToken = async () => {
             const data = await getAccessToken(clientId);
+            if (!data) {
+                const data = getRefreshToken(clientId);
+            }
             if (data) {
                 const accessToken = data.access_token;
                 console.log("Access token data:", data);
 
                 // Get user's topSongs of the month
                 const topSongsData = await fetchTopTracks(accessToken);
+                const personalData = await fetchProfile(accessToken);
+
+                populateUI(personalData);
 
                 if (topSongsData) {
                     console.log("Top Songs", topSongsData);
@@ -29,6 +35,7 @@ const Callback = () => {
                 getRefreshToken(clientId);
                 console.log("REFRESHED TOKEN");
             }
+
         };
         
         fetchAccessToken();
@@ -38,25 +45,11 @@ const Callback = () => {
         <div>
             <Bokeh/>
 
-            <h1>Callback Handling</h1>
-            <h2>Processing authentication</h2>
+            <div className="flex flex-col justify-center items-center align-center">
+                <h1><span id="displayName"></span>'s Top Tracks</h1>
+                <h2>Displaying the top 20 tracks of the month</h2>
+            </div>
 
-            <section id="profile">
-                    <h2>Logged in as <span id="displayName"></span></h2>
-                    <span id="avatar"></span>
-                    <ul>
-                        <li>User ID: <span id="id"></span></li>
-                        <li>Email: <span id="email"></span></li>
-                        <li>Spotify URI: <a id="uri" href="#"></a></li>
-                        <li>Link: <a id="url" href="#"></a></li>
-                        <li>Profile Image: <span id="imgUrl"></span></li>
-                    </ul>
-                </section>
-
-                <div className="section">
-                    <h2>Top Songs This Month</h2>
-
-                </div>
         </div>
     );
 };

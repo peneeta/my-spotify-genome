@@ -10,13 +10,18 @@ export default function Authorization() {
 
     const handleAuthClick = () => {
         redirectToAuthCodeFlow(clientId);
+        
     };
 
     useEffect(() => {
         const authenticate = async () => {
             const refreshToken = localStorage.getItem('refresh_token');
+
             if (refreshToken) {
-                getRefreshToken(clientId);
+                await getRefreshToken(clientId);
+                setIsAuthenticated(true);
+                console.log("Authenticated?", isAuthenticated);
+                
             } else {
                 let accessToken = localStorage.getItem('access_token');
 
@@ -25,9 +30,11 @@ export default function Authorization() {
                     if (data) {
                         accessToken = data.access_token;
                         setIsAuthenticated(true);
+                        console.log("Authenticated?", isAuthenticated);
                     }
                 } else {
-                    setIsAuthenticated(true)
+                    setIsAuthenticated(true);
+                    console.log("Authenticated?", isAuthenticated);
                 }
     
                 if (accessToken) {
@@ -36,15 +43,13 @@ export default function Authorization() {
     
                     if (tokenExpiry && Date.now() >= parseInt(tokenExpiry)) {
                         console.log("Token expired. Refreshing...")
-                        const refreshedData = await getRefreshToken(clientId);
-    
-                        if (refreshedData) {
-                            accessToken = refreshedData.access_token;
-                        }
-    
+                        await getRefreshToken(clientId);
+                        setIsAuthenticated(true);
+                        console.log("Authenticated?", isAuthenticated);
                     }
                 }
-            }    
+            }  
+             
         };
 
         authenticate();
