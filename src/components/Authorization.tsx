@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate} from "react-router-dom";
 import { redirectToAuthCodeFlow} from "../scripts/authCodePkce";
 import Bokeh from "./Bokeh"
-
-const clientId = 'e3dc42cfeb2b4fb0bb03369b39d757e5';
+import config from '../config';
 
 export default function Authorization() {
     // True or False whether user is authenticated
@@ -11,7 +10,7 @@ export default function Authorization() {
 
     // False response -> button onClick
     const handleAuthClick = () => {
-        redirectToAuthCodeFlow(clientId);
+        redirectToAuthCodeFlow(config.api.clientId);
     };
 
     // True response -> button onClick

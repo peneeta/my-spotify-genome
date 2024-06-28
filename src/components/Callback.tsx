@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
 import { getAccessToken, getRefreshToken } from "../scripts/authCodePkce";
-import Bokeh from "./Bokeh";
 import { fetchProfile, fetchTopTracks, populateUI } from "../scripts/apiQueryFuncs";
-
-
-const clientId = 'e3dc42cfeb2b4fb0bb03369b39d757e5';
-
+import config from '../config';
+import Bokeh from "./Bokeh";
 
 const Callback = () => {
     const [topSongsMonth, setTopSongsMonth] = useState([]);
@@ -14,13 +11,13 @@ const Callback = () => {
         const fetchData = async () => {
             // If user accesses for the first time
             if(!localStorage.getItem("access_token")) {
-                const data = await getAccessToken(clientId);
+                const data = await getAccessToken(config.api.clientId);
                 const accessToken = data.access_token;
                 const personalData = await fetchProfile(accessToken)
                 populateUI(personalData);
             } else {
                 // If user refreshes page or already has authenticated
-                const data = await getRefreshToken(clientId);
+                const data = await getRefreshToken(config.api.clientId);
                 if (data) {
                     const accessToken = data.access_token;
     

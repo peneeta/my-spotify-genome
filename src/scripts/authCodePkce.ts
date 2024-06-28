@@ -1,3 +1,5 @@
+import config from '../config';
+
 /*
 redirectToAuthCodeFlow
 Function to redirect to Spotify authorization
@@ -16,7 +18,7 @@ export async function redirectToAuthCodeFlow(clientId: string) {
     params.append("scope", "user-read-private user-top-read");
     params.append("code_challenge_method", "S256");
     params.append("code_challenge", challenge);
-    params.append("redirect_uri", "http://localhost:5173/callback");
+    params.append("redirect_uri", config.api.redirectUri);
 
     document.location = `https://accounts.spotify.com/authorize?${params.toString()}`;
 }
@@ -54,7 +56,7 @@ export async function getAccessToken(clientId: string) {
         client_id: clientId,
         grant_type: 'authorization_code',
         code: authCode,
-        redirect_uri: 'http://localhost:5173/callback',
+        redirect_uri: config.api.redirectUri,
         code_verifier: String(verifier),
       });
 
