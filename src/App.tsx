@@ -3,7 +3,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css'
 
-import Login from './components/Login'
 import Authorization from './components/Authorization';
 import Callback from './components/Callback';
 

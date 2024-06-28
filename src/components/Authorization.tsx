@@ -1,59 +1,43 @@
 import { useEffect, useState } from "react";
-import { redirectToAuthCodeFlow, getAccessToken, getRefreshToken } from "../scripts/authCodePkce";
+import { useNavigate} from "react-router-dom";
+import { redirectToAuthCodeFlow} from "../scripts/authCodePkce";
 import Bokeh from "./Bokeh"
 
 const clientId = 'e3dc42cfeb2b4fb0bb03369b39d757e5';
 
 export default function Authorization() {
-
+    // True or False whether user is authenticated
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+    // False response -> button onClick
     const handleAuthClick = () => {
         redirectToAuthCodeFlow(clientId);
-        
     };
+
+    // True response -> button onClick
+    const navigate = useNavigate();
+    const handleCallbackClick = () => {
+        navigate("/callback")
+    }
 
     useEffect(() => {
         const authenticate = async () => {
             const refreshToken = localStorage.getItem('refresh_token');
 
+            // You only need to check whether a refresh token exists
+            // Actually refreshing the token happens in Callback
             if (refreshToken) {
-                await getRefreshToken(clientId);
                 setIsAuthenticated(true);
-                console.log("Authenticated?", isAuthenticated);
-                
-            } else {
-                let accessToken = localStorage.getItem('access_token');
-
-                if (!accessToken) {
-                    const data = await getAccessToken(clientId);
-                    if (data) {
-                        accessToken = data.access_token;
-                        setIsAuthenticated(true);
-                        console.log("Authenticated?", isAuthenticated);
-                    }
-                } else {
-                    setIsAuthenticated(true);
-                    console.log("Authenticated?", isAuthenticated);
-                }
-    
-                if (accessToken) {
-                    // check if access token is expired
-                    const tokenExpiry = localStorage.getItem('token_expiry');
-    
-                    if (tokenExpiry && Date.now() >= parseInt(tokenExpiry)) {
-                        console.log("Token expired. Refreshing...")
-                        await getRefreshToken(clientId);
-                        setIsAuthenticated(true);
-                        console.log("Authenticated?", isAuthenticated);
-                    }
-                }
-            }  
-             
+            }
         };
 
         authenticate();
     }, []);
+
+    // Check whether authenticated value was set to True
+    useEffect(() => {
+        console.log("Authenticated?", isAuthenticated);
+    }, [isAuthenticated]);
 
     return (
         <div>
@@ -62,7 +46,15 @@ export default function Authorization() {
                 <h1 className="title py-4">My Spotify Genome</h1>
                 <h2>Generate your musical DNA</h2>
 
-                <a onClick={handleAuthClick} id="login" className="text-white bg-spotify-green hover:bg-spotify-dark-green font-medium rounded-full text-base px-8 py-3 dark:bg-spotify-green my-3">Login with Spotify</a>
+                {/* Navigate to authorization page if not authenticated */}
+                {!isAuthenticated && (
+                    <a onClick={handleAuthClick} id="login" className="text-white bg-spotify-green hover:bg-spotify-dark-green font-medium rounded-full text-base px-8 py-3 dark:bg-spotify-green my-3">Login with Spotify</a>
+                )}
+                
+                {/* Navigate to callback page if authenticated */}
+                {isAuthenticated && (
+                    <a onClick={handleCallbackClick} id="login" className="text-white bg-spotify-green hover:bg-spotify-dark-green font-medium rounded-full text-base px-8 py-3 dark:bg-spotify-green my-3">View Your Genome</a>
+                )}
 
             </div>
 

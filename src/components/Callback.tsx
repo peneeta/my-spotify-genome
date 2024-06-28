@@ -11,34 +11,40 @@ const Callback = () => {
     const [topSongsMonth, setTopSongsMonth] = useState([]);
 
     useEffect(() => {
-        const fetchAccessToken = async () => {
-            const data = await getAccessToken(clientId);
-            if (!data) {
-                const data = getRefreshToken(clientId);
-            }
-            if (data) {
+        const fetchData = async () => {
+            // If user accesses for the first time
+            if(!localStorage.getItem("access_token")) {
+                const data = await getAccessToken(clientId);
                 const accessToken = data.access_token;
-                console.log("Access token data:", data);
-
-                // Get user's topSongs of the month
-                const topSongsData = await fetchTopTracks(accessToken);
-                const personalData = await fetchProfile(accessToken);
-
+                const personalData = await fetchProfile(accessToken)
                 populateUI(personalData);
-
-                if (topSongsData) {
-                    console.log("Top Songs", topSongsData);
-                    setTopSongsMonth(topSongsData.items);
-                }
-
             } else {
-                getRefreshToken(clientId);
-                console.log("REFRESHED TOKEN");
+                // If user refreshes page or already has authenticated
+                const data = await getRefreshToken(clientId);
+                if (data) {
+                    const accessToken = data.access_token;
+    
+                    // Get user's topSongs of the month
+                    const topSongsData = await fetchTopTracks(accessToken);
+                    const personalData = await fetchProfile(accessToken);
+                    populateUI(personalData);
+    
+                    
+    
+                    if (topSongsData) {
+                        console.log("Top Songs", topSongsData);
+                        setTopSongsMonth(topSongsData.items);
+                    }
+    
+                } else {
+                    console.log("An error occurred");
+                }
+    
             }
-
+            
         };
         
-        fetchAccessToken();
+        fetchData();
     }, []);
 
     return (
