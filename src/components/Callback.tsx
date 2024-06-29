@@ -1,42 +1,45 @@
 import { useEffect, useState } from "react";
 import { getAccessToken, getRefreshToken } from "../scripts/authCodePkce";
 import { fetchProfile, fetchTopTracks, populateUI } from "../scripts/apiQueryFuncs";
+
 import config from '../config';
 import Bokeh from "./Bokeh";
+import TrackResult from "./TrackResult";
 
 const Callback = () => {
-    const [topSongsMonth, setTopSongsMonth] = useState([]);
+    const [topSongsMonth, setTopSongsMonth] = useState<TopTracksObject>({
+        href: "",
+        items: [],
+        limit: 0,
+        next: "",
+        offset: 0,
+        previous: "",
+        total: 0,
+    });
 
     useEffect(() => {
         const fetchData = async () => {
-            // If user accesses for the first time
+            
             if(!localStorage.getItem("access_token")) {
-                const data = await getAccessToken(config.api.clientId);
-                const accessToken = data.access_token;
-                const personalData = await fetchProfile(accessToken)
-                populateUI(personalData);
+                // If user accesses for the first time
+                await getAccessToken(config.api.clientId);
             } else {
                 // If user refreshes page or already has authenticated
-                const data = await getRefreshToken(config.api.clientId);
-                if (data) {
-                    const accessToken = data.access_token;
-    
-                    // Get user's topSongs of the month
-                    const topSongsData = await fetchTopTracks(accessToken);
-                    const personalData = await fetchProfile(accessToken);
-                    populateUI(personalData);
-    
-                    
-    
-                    if (topSongsData) {
-                        console.log("Top Songs", topSongsData);
-                        setTopSongsMonth(topSongsData.items);
-                    }
-    
-                } else {
-                    console.log("An error occurred");
-                }
-    
+                await getRefreshToken(config.api.clientId);
+            }
+            
+            const accessToken = localStorage.getItem("access_token");
+
+            if (accessToken) {
+                const personalData = await fetchProfile(accessToken);
+                populateUI(personalData);
+
+                const topSongsObject = await fetchTopTracks(accessToken);
+
+                setTopSongsMonth(topSongsObject)
+
+            } else {
+                console.log("access token was NULL");
             }
             
         };
@@ -48,9 +51,20 @@ const Callback = () => {
         <div>
             <Bokeh/>
 
-            <div className="flex flex-col justify-center items-center align-center">
+            <div className="flex flex-col justify-center items-center align-center my-5">
                 <h1><span id="displayName"></span>'s Top Tracks</h1>
                 <h2>Displaying the top 20 tracks of the month</h2>
+            </div>
+
+            <div className="flex flex-col justify-center align-center mx-10">
+                {topSongsMonth.items.map(track => (
+                    <TrackResult
+                        image={track.album.images[2].url}
+                        name={track.name}
+                        artist={track.artists[0].name}
+                        popularity={track.popularity}
+                    />
+                ))}
             </div>
 
         </div>

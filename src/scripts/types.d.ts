@@ -22,3 +22,39 @@ interface Image {
     height: number;
     width: number;
 }
+
+interface TopTracksObject {
+    href: string,
+    items: Track[],
+    limit: number,
+    next: string,
+    offset: number,
+    previous: string,
+    total: number,
+        
+}
+
+interface Track {
+    album: Album,
+    artists: any,
+    available_markets: string[],
+    disc_number: number,
+    duration_ms: number,
+    explicit: boolean,
+    external_ids: { isrc: string },
+    external_urls: { spotify: string },
+    href: string,
+    id: string,
+    is_local: boolean,
+    name: string,
+    popularity: number,
+    type: string,
+    uri: string
+}
+
+interface Album {
+    album_type: string,
+    images: Image[],
+    name: string,
+}
+

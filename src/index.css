@@ -14,7 +14,20 @@ h1 {
 
 h2 {
   color: #fff;
+  font-weight: 800;
+  font-size: 1.3rem;
   font-family: "Quicksand", sans-serif;
+}
+
+h3 {
+  color: #fff;
+  font-family: "Quicksand", sans-serif;
+  font-size: 1rem;
+}
+
+p {
+  color: #fff;
+  font-family: "Raleway", sans-serif;
 }
 
 li {

@@ -14,7 +14,7 @@ Function to fetch user's top artists/songs
 */
 export async function fetchTopTracks(code: string) {
     try {
-        const result = await fetch("https://api.spotify.com/v1/me/top/tracks?medium_term", {
+        const result = await fetch("https://api.spotify.com/v1/me/top/tracks?long_term", {
             method: "GET", 
             headers: { Authorization: `Bearer ${code}`}
         });
@@ -29,6 +29,7 @@ export async function fetchTopTracks(code: string) {
     }  
 }
 
+// Function to populate user's name
 export async function populateUI(profile: UserProfile) {
     document.getElementById("displayName")!.innerText = profile.display_name;
 }
