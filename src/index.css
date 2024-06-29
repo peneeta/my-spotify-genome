@@ -35,6 +35,14 @@ li {
   font-family: "Raleway", sans-serif;
 }
 
-a {
+.button {
+  text-decoration: none;
+  font-style: normal;
+}
+
+.link a {
+  color: #fff;
+  text-decoration: underline;
+  font-style: italic;
   font-family: "Raleway", sans-serif;
 }

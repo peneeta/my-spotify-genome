@@ -1,5 +1,6 @@
 import './bokeh.css';
 
+// Adapted from https://codepen.io/andyfitz/pen/RJwqbZ 
 export default function Bokeh() {
     return (
         <svg className="bokeh" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
