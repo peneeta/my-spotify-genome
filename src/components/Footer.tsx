@@ -1,6 +1,6 @@
 export default function Footer() {
     return (
-        <div className="div text-center bg-black/30 py-7" style={{width: "100vw"}}>
+        <div className="div text-center bg-black/30 py-7 px-5" style={{width: "100vw"}}>
         <p>Created by Peneeta</p>
 
         <div className="github-link link flex flex-row gap-6 justify-center items-center align-center">
