@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { useNavigate} from "react-router-dom";
 import { redirectToAuthCodeFlow} from "../scripts/authCodePkce";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGithub, faSpotify } from "@fortawesome/free-brands-svg-icons";
+import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 
 import Bokeh from "./Bokeh"
 import config from '../config';
+import SpinningDNA from "./SpinningDNA";
+import Footer from "./Footer";
 
 export default function Authorization() {
     // True or False whether user is authenticated
@@ -45,8 +47,10 @@ export default function Authorization() {
         <div>
             <Bokeh />
             <div className="content flex flex-col justify-center align-center items-center" style={{height:"90vh"}}>
-                <h1 className="title py-4" style={{letterSpacing:"3px"}}>My Spotify Genome</h1>
-                <h2>Generate your musical DNA</h2>
+                <h1 className="title py-2" style={{letterSpacing:"3px"}}>My Spotify Genome</h1>
+                <h2 className="mb-4">Generate your musical DNA</h2>
+                <SpinningDNA/>
+                
 
                 {/* Navigate to authorization page if not authenticated */}
                 {!isAuthenticated && (
@@ -64,19 +68,9 @@ export default function Authorization() {
                 )}
 
             </div>
+            <Footer />
 
-            <div className="div text-center">
-                <p>Created by Peneeta</p>
-
-                <div className="github-link link flex flex-row gap-6 justify-center items-center align-center my-3">
-                    <FontAwesomeIcon icon={faGithub} size="lg" style={{color: "#fff"}}/>
-
-                    <a href="https://github.com/peneeta/my-spotify-genome" target="_blank">https://github.com/peneeta/my-spotify-genome</a>
-                </div>
-                
-            </div>
-
-
+            
         </div>
     );
 };
