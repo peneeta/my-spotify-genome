@@ -1,5 +1,3 @@
-// import { useEffect, useState } from 'react'
-// import { getAccessToken } from "./scripts/authCodePkce";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css'
 

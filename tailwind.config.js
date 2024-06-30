@@ -9,6 +9,7 @@ export default {
       colors: {
         'spotify-green':'#00B33D',
         'spotify-dark-green': '#007026',
+        'light-blue': '#3B86FF',
       }
     },
   },

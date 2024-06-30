@@ -50,6 +50,10 @@ const Callback = () => {
     return (
         <div>
             <Bokeh/>
+            <div className="flex flex-col justify-center align-center items-center text-center gap-3 my-4">
+                <h2>Welcome, <span id="displayName"></span>.</h2>
+                <h2>Here are your results.</h2>
+            </div>
             <TopTracks dataObj={topSongsMonth} />
         </div>
     );
