@@ -19,7 +19,19 @@ const SpotifyDNA: React.FC<CanvasProps> = (props) => {
     }
   }, []);
 
-  return <canvas ref={canvasRef} {...props} id="canvas" style={{ width: '100%', height: '100%' }} />;
+  return (
+    <>
+
+    <div className="flex flex-col items-center justify-center align-center">
+      <canvas ref={canvasRef} {...props} id="canvas" style={{ width: '60%', height: '40%' }} />
+    </div>
+      
+    </>
+    
+
+  )
+  
+  
 }
 
 export default SpotifyDNA;

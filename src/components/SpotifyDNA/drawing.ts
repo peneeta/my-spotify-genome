@@ -1,63 +1,62 @@
 import Paper from 'paper';
-// import dnaStrand from './strand1_dna.svg';
 
 const drawing = () => {
   Paper.project.clear()
-  var amount = 6;
-  var height = 10;
 
-  var path = new Paper.Path({
+  const amplitude = 100;
+  const frequency = 0.01;
+  const wiggleAmplitude = 5; // Small amplitude for wiggling
+  const wiggleFrequency = 0.05; // Frequency for wiggling
+
+    // Create the second path (inverse sine wave)
+    const strand1 = new Paper.Path({
+      strokeColor: [0.8],
+      strokeWidth: 4,
+    });
+
+  const strand2 = new Paper.Path({
     strokeColor: [0.8],
-	  strokeWidth: 30,
-	  strokeCap: 'smooth'
-  })
+    strokeWidth: 4,
+    strokeCap: 'round',
+  });
 
-  path.position = Paper.view.center;
+  const width = Paper.view.size.width;
+  const h = Paper.view.size.height;
+  const centerY = h / 2;
 
-  for (var i = 0; i <= amount; i++) {
-    const x = (i / amount) * Paper.view.size.width;
-    const y = 1 * Paper.view.size.height;
-    path.add(new Paper.Point(x,y));
+  for (let x = 0; x < width; x += 1) {
+    const y1 = centerY - Math.sin(x * frequency) * amplitude; // Inverse sine wave
+    const y2 = centerY + Math.sin(x * frequency) * amplitude;
+
+    strand1.add(new Paper.Point(x, y1));
+    strand2.add(new Paper.Point(x, y2));
   }
 
-  path.selected = true;
+  strand1.smooth();
+  strand2.smooth();
 
+
+  // Animate the paths to create the wiggling effect
   Paper.view.onFrame = (event: any) => {
-    for (var i = 0; i <= amount; i++) {
-      var segment = path.segments[i];
+    for (let i = 0; i < strand1.segments.length; i++) {
+      const segment1 = strand1.segments[i];
+      const segment2 = strand2.segments[i];
 
-      // A cylic value between -1 and 1
-    var sinus = Math.sin(event.time * 3 + i);
-    
-    // Change the y position of the segment point:
-    segment.point.y = sinus * height + 100;
-  }
-      // Uncomment the following line and run the script again
-      // to smooth the path:
-      path.smooth();
-    }  
+      const x = segment1.point.x;
 
-  // Paper.project.importSVG(dnaStrand, (item: any) => {
-  //   if (!item) {
-  //     console.error('Failed to load svg')
-  //     return
-  //   }
+      const baseY1 = centerY + Math.sin(x * frequency) * amplitude; // Static sine wave
+      const baseY2 = centerY - Math.sin(x * frequency) * amplitude; // Static inverse sine wave
 
-  //   let path = item.clone() as paper.Path;
-  //   if (path instanceof Paper.Path) {
-  //     console.log("path is a paper.Path")
-  //   }
+      const wiggleY1 = Math.sin(event.time * 3 + i * wiggleFrequency) * wiggleAmplitude;
+      const wiggleY2 = Math.sin(event.time * 3 + i * wiggleFrequency) * wiggleAmplitude;
 
-  //   // Remove the original imported SVG to prevent it from rendering
-  //   item.remove();
+      segment1.point.y = baseY1 + wiggleY1;
+      segment2.point.y = baseY2 + wiggleY2;
+    }
 
-  //   path.position = Paper.view.center;
-  //   path.strokeCap = 'round';
-  //   path.selected = true; // just to see the movement
-
-    
-
-  // })
+    strand1.smooth();
+    strand2.smooth();
+  };
 
 };
 
