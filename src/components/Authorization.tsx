@@ -4,7 +4,7 @@ import { redirectToAuthCodeFlow} from "../scripts/authCodePkce";
 
 import Bokeh from "./Bokeh"
 import config from '../config';
-import SpinningDNA from "./SpinningDNA";
+import SpinningDNA from "./LottieSpinningDNA";
 import LoginButton from "./LoginButton";
 import Footer from "./Footer";
 

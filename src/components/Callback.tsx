@@ -5,6 +5,8 @@ import { fetchProfile, fetchTopTracks, populateUI } from "../scripts/apiQueryFun
 import config from '../config';
 import Bokeh from "./Bokeh";
 import TopTracks from "./TopTracks";
+import SelectorButton from "./SelectorButton";
+import SpotifyDNA from "./SpotifyDNA/SpotifyDNA";
 
 const Callback = () => {
     const [topSongsMonth, setTopSongsMonth] = useState<TopTracksObject>({
@@ -50,10 +52,18 @@ const Callback = () => {
     return (
         <div>
             <Bokeh/>
-            <div className="flex flex-col justify-center align-center items-center text-center gap-3 my-4">
-                <h2>Welcome, <span id="displayName"></span>.</h2>
+            <div className="flex flex-col justify-center align-center items-center text-center gap-3 mt-14">
+                <h1>Welcome, <span id="displayName"></span>.</h1>
                 <h2>Here are your results.</h2>
+
+                <div className="time-buttons flex flex-row justify-center items-center align-center gap-6">
+                    <SelectorButton text={"This Month"} isActive={true}/>
+                    <SelectorButton text={"This Week"} isActive={false}/>
+                    <SelectorButton text={"This Year"} isActive={false}/>
+                </div>
+
             </div>
+            <SpotifyDNA/>
             <TopTracks dataObj={topSongsMonth} />
         </div>
     );

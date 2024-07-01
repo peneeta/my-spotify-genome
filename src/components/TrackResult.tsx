@@ -4,7 +4,7 @@ export default function TrackResult({ image, name, artist}:any) {
             <img src={image} alt="album-cover" />
             <div className="flex flex-col align-center justify-center">
                 <h4>{name}</h4>
-                <p>{artist}</p>
+                <p style={{fontSize: "0.9rem"}}>{artist}</p>
             </div> 
         </div>
     )
