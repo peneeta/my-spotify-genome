@@ -37,20 +37,14 @@ const drawing = () => {
   // Create a group to hold the vertical lines
   const verticalLines = new Paper.Group();
 
-  // Function to get random indices
-  const getRandomIndices = (numIndices: number, maxIndex: number) => {
-    const indices: number[] = [];
-    while (indices.length < numIndices) {
-      const randIndex = Math.floor(Math.random() * maxIndex);
-      if (!indices.includes(randIndex)) {
-        indices.push(randIndex);
-      }
-    }
-    return indices;
+  // Function to get evenly spaced indices
+  const getEvenlySpacedIndices = (numIndices: number, maxIndex: number) => {
+    const step = Math.floor(maxIndex / numIndices);
+    return Array.from({ length: numIndices }, (_, i) => i * step);
   };
 
-  // Initial random indices for vertical lines
-  const randomIndices = getRandomIndices(20, strand1.segments.length);
+  // Initial evenly spaced indices for vertical lines
+  const evenlySpacedIndices = getEvenlySpacedIndices(20, strand1.segments.length);
 
   // Animate the paths to create the wiggling effect
   Paper.view.onFrame = (event: any) => {
@@ -71,8 +65,8 @@ const drawing = () => {
       segment1.point.y = baseY1 + wiggleY1;
       segment2.point.y = baseY2 + wiggleY2;
 
-      // Draw vertical line only for random indices
-      if (randomIndices.includes(i)) {
+      // Draw vertical line only for evenly spaced indices
+      if (evenlySpacedIndices.includes(i)) {
         const verticalLine = new Paper.Path.Line({
           from: segment1.point,
           to: segment2.point,
