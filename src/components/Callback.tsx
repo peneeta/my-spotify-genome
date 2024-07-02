@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAccessToken, getRefreshToken } from "../scripts/authCodePkce";
-import { fetchProfile, fetchTopTracks, populateUI } from "../scripts/apiQueryFuncs";
+import { fetchProfile, fetchTopArtists, fetchTopTracks, populateUI } from "../scripts/apiQueryFuncs";
 
 import config from '../config';
 import Bokeh from "./Bokeh";
@@ -9,7 +9,10 @@ import SelectorButton from "./SelectorButton";
 import SpotifyDNA from "./SpotifyDNA/SpotifyDNA";
 
 const Callback = () => {
-    const [topSongsMonth, setTopSongsMonth] = useState<TopTracksObject>({
+
+    const timeFrame = ["short_term", "medium_term", "long_term"]
+
+    const [topSongs, setTopSongs] = useState<TopTracksObject>({
         href: "",
         items: [],
         limit: 0,
@@ -19,41 +22,66 @@ const Callback = () => {
         total: 0,
     });
 
+    const [topArtists, setTopArtists] = useState<TopArtistsObject>();
 
-    const [active, setActive] = useState(1);
-    const handleButtonClick = (buttonId: number) => {
-        setActive(buttonId);
-    }
-
-    useEffect(() => {
-        const fetchData = async () => {
-            
-            if(!localStorage.getItem("access_token")) {
-                // If user accesses for the first time
-                await getAccessToken(config.api.clientId);
-            } else {
-                // If user refreshes page or already has authenticated
-                await getRefreshToken(config.api.clientId);
-            }
-            
-            const accessToken = localStorage.getItem("access_token");
-
-            if (accessToken) {
-                const personalData = await fetchProfile(accessToken);
-                populateUI(personalData);
-
-                const topSongsObject = await fetchTopTracks(accessToken, "medium_term");
-
-                setTopSongsMonth(topSongsObject)
-
-            } else {
-                console.log("access token was NULL");
-            }
-            
-        };
+    const initialLoad = async () => {
+        if(!localStorage.getItem("access_token")) {
+            // If user accesses for the first time
+            await getAccessToken(config.api.clientId);
+        } else {
+            // If user refreshes page or already has authenticated
+            await getRefreshToken(config.api.clientId);
+        }
         
-        fetchData();
+        const accessToken = localStorage.getItem("access_token");
+
+        if (accessToken) {
+
+            const personalData = await fetchProfile(accessToken);
+            populateUI(personalData);
+
+            fetchTop();
+        }
+    };
+
+    const fetchTop = async () => {
+        
+        const accessToken = localStorage.getItem("access_token");
+
+        if (accessToken) {
+
+            const topSongsObject = await fetchTopTracks(accessToken, timeFrame[active]);
+            const topArtistsObject = await fetchTopArtists(accessToken, timeFrame[active]);
+            console.log(topArtistsObject);
+
+            if (!topSongsObject) {
+                console.log("An error occurred")
+            }
+
+            if (!topArtistsObject) {
+                console.log("Error fetching top artists")
+            }
+
+            setTopSongs(topSongsObject)
+            setTopArtists(topArtistsObject)
+
+        } else {
+            console.log("access token was NULL");
+        }
+        
+    };
+
+    // Get user's top items on page load
+    useEffect(() => {
+        initialLoad();
     }, []);
+
+    // Handle button click
+    const [active, setActive] = useState(0);
+    const handleButtonClick = async (buttonId: number) => {
+        setActive(buttonId);
+        await fetchTop();
+    }
 
     return (
         <div>
@@ -64,25 +92,25 @@ const Callback = () => {
 
                 <div className="time-buttons flex flex-row justify-center items-center align-center gap-6">
                     <SelectorButton 
+                        text={"This Week"} 
+                        onHandleClick={() => handleButtonClick(0)}
+                        isActive={active === 0}
+                    />
+                    <SelectorButton 
                         text={"This Month"} 
                         onHandleClick={() => handleButtonClick(1)}
                         isActive={active === 1}
                     />
                     <SelectorButton 
-                        text={"This Week"} 
+                        text={"This Year"} 
                         onHandleClick={() => handleButtonClick(2)}
                         isActive={active === 2}
-                    />
-                    <SelectorButton 
-                        text={"This Year"} 
-                        onHandleClick={() => handleButtonClick(3)}
-                        isActive={active === 3}
                     />
                 </div>
 
             </div>
             <SpotifyDNA/>
-            <TopTracks dataObj={topSongsMonth} />
+            <TopTracks dataObj={topSongs} />
         </div>
     );
 };

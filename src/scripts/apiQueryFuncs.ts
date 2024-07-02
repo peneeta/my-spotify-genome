@@ -10,13 +10,19 @@ export async function fetchProfile(code: string): Promise<UserProfile> {
 }
 
 /*
-Function to fetch user's top artists/songs
+Function to fetch user's top songs
 Code: Access token
-Time: Must be "short_term", "medium_term", or "long_term"
+time: either short_term, medium_term, or long_term
 */
 export async function fetchTopTracks(code: string, time: string) {
+
+    const params = new URLSearchParams();
+    params.append("time_range", time);
+    params.append("limit", "20");
+    params.append("offset", "5");
+
     try {
-        const result = await fetch(`https://api.spotify.com/v1/me/top/tracks?${time}`, {
+        const result = await fetch(`https://api.spotify.com/v1/me/top/tracks?${params.toString()}`, {
             method: "GET", 
             headers: { Authorization: `Bearer ${code}`}
         });
@@ -30,6 +36,35 @@ export async function fetchTopTracks(code: string, time: string) {
         return null
     }  
 }
+
+/* 
+Function to fetch user's top artists
+Code: access token
+time: either short_term, medium_term, or long_term
+*/
+export async function fetchTopArtists(code: string, time: string) {
+
+    const params = new URLSearchParams();
+    params.append("time_range", time);
+    params.append("limit", "20");
+    params.append("offset", "5");
+
+    try {
+        const result = await fetch(`https://api.spotify.com/v1/me/top/artists?${params.toString()}`, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${code}`}
+        });
+
+        if (result.ok) {
+            console.log("Artists retrieved")
+            return await result.json()
+        }
+    } catch (error) {
+        console.error("Error fetching top artists")
+    }
+}
+
+
 
 // Function to populate user's name
 export async function populateUI(profile: UserProfile) {

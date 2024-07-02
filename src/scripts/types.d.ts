@@ -34,6 +34,26 @@ interface TopTracksObject {
         
 }
 
+interface TopArtistsObject {
+    href: string,
+    items: Artist[],
+    limit: number,
+    offset: number
+}
+
+interface Arist {
+    external_urls: { spotify: string },
+    followers: { href: string; total: number; };
+    genres: string[],
+    href: string,
+    id: string,
+    images: Image[],
+    name: string,
+    popularity: number,
+    type: string,
+    uri: string
+}
+
 interface Track {
     album: Album,
     artists: any,

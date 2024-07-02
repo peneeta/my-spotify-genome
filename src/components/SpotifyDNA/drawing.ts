@@ -3,8 +3,8 @@ import Paper from 'paper';
 const drawing = () => {
   Paper.project.clear();
 
-  const amplitude = 100;
-  const frequency = 0.0094;
+  const amplitude = 130;
+  const frequency = 0.01054;
   const wiggleAmplitude = 10; // Small amplitude for wiggling
   const wiggleFrequency = 0.01; // Frequency for wiggling
 
