@@ -19,6 +19,12 @@ const Callback = () => {
         total: 0,
     });
 
+
+    const [active, setActive] = useState(1);
+    const handleButtonClick = (buttonId: number) => {
+        setActive(buttonId);
+    }
+
     useEffect(() => {
         const fetchData = async () => {
             
@@ -57,9 +63,21 @@ const Callback = () => {
                 <h2>Here are your results.</h2>
 
                 <div className="time-buttons flex flex-row justify-center items-center align-center gap-6">
-                    <SelectorButton text={"This Month"} isActive={true}/>
-                    <SelectorButton text={"This Week"} isActive={false}/>
-                    <SelectorButton text={"This Year"} isActive={false}/>
+                    <SelectorButton 
+                        text={"This Month"} 
+                        onHandleClick={() => handleButtonClick(1)}
+                        isActive={active === 1}
+                    />
+                    <SelectorButton 
+                        text={"This Week"} 
+                        onHandleClick={() => handleButtonClick(2)}
+                        isActive={active === 2}
+                    />
+                    <SelectorButton 
+                        text={"This Year"} 
+                        onHandleClick={() => handleButtonClick(3)}
+                        isActive={active === 3}
+                    />
                 </div>
 
             </div>

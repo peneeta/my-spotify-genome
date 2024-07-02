@@ -4,7 +4,7 @@ const drawing = () => {
   Paper.project.clear()
 
   const amplitude = 100;
-  const frequency = 0.01;
+  const frequency = 0.0157;
   const wiggleAmplitude = 5; // Small amplitude for wiggling
   const wiggleFrequency = 0.05; // Frequency for wiggling
 
@@ -19,6 +19,12 @@ const drawing = () => {
     strokeWidth: 4,
     strokeCap: 'round',
   });
+
+  const line = new Paper.Path.Line({
+    from: [20,20],
+    to: [80,80],
+    strokeColor: 'red'
+  })
 
   const width = Paper.view.size.width;
   const h = Paper.view.size.height;
@@ -35,7 +41,6 @@ const drawing = () => {
   strand1.smooth();
   strand2.smooth();
 
-
   // Animate the paths to create the wiggling effect
   Paper.view.onFrame = (event: any) => {
     for (let i = 0; i < strand1.segments.length; i++) {
@@ -47,8 +52,8 @@ const drawing = () => {
       const baseY1 = centerY + Math.sin(x * frequency) * amplitude; // Static sine wave
       const baseY2 = centerY - Math.sin(x * frequency) * amplitude; // Static inverse sine wave
 
-      const wiggleY1 = Math.sin(event.time * 3 + i * wiggleFrequency) * wiggleAmplitude;
-      const wiggleY2 = Math.sin(event.time * 3 + i * wiggleFrequency) * wiggleAmplitude;
+      const wiggleY1 = Math.sin(event.time * 0.8 + i * wiggleFrequency) * wiggleAmplitude;
+      const wiggleY2 = Math.sin(event.time * 0.8 + i * wiggleFrequency) * wiggleAmplitude;
 
       segment1.point.y = baseY1 + wiggleY1;
       segment2.point.y = baseY2 + wiggleY2;
