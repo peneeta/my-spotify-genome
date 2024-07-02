@@ -1,30 +1,23 @@
 import Paper from 'paper';
 
 const drawing = () => {
-  Paper.project.clear()
+  Paper.project.clear();
 
   const amplitude = 100;
-  const frequency = 0.0157;
-  const wiggleAmplitude = 5; // Small amplitude for wiggling
-  const wiggleFrequency = 0.05; // Frequency for wiggling
+  const frequency = 0.0094;
+  const wiggleAmplitude = 10; // Small amplitude for wiggling
+  const wiggleFrequency = 0.01; // Frequency for wiggling
 
-    // Create the second path (inverse sine wave)
-    const strand1 = new Paper.Path({
-      strokeColor: [0.8],
-      strokeWidth: 4,
-    });
+  const strand1 = new Paper.Path({
+    strokeColor: [0.8],
+    strokeWidth: 4,
+  });
 
   const strand2 = new Paper.Path({
     strokeColor: [0.8],
     strokeWidth: 4,
     strokeCap: 'round',
   });
-
-  const line = new Paper.Path.Line({
-    from: [20,20],
-    to: [80,80],
-    strokeColor: 'red'
-  })
 
   const width = Paper.view.size.width;
   const h = Paper.view.size.height;
@@ -41,8 +34,28 @@ const drawing = () => {
   strand1.smooth();
   strand2.smooth();
 
+  // Create a group to hold the vertical lines
+  const verticalLines = new Paper.Group();
+
+  // Function to get random indices
+  const getRandomIndices = (numIndices: number, maxIndex: number) => {
+    const indices: number[] = [];
+    while (indices.length < numIndices) {
+      const randIndex = Math.floor(Math.random() * maxIndex);
+      if (!indices.includes(randIndex)) {
+        indices.push(randIndex);
+      }
+    }
+    return indices;
+  };
+
+  // Initial random indices for vertical lines
+  const randomIndices = getRandomIndices(20, strand1.segments.length);
+
   // Animate the paths to create the wiggling effect
   Paper.view.onFrame = (event: any) => {
+    verticalLines.removeChildren(); // Clear previous lines
+
     for (let i = 0; i < strand1.segments.length; i++) {
       const segment1 = strand1.segments[i];
       const segment2 = strand2.segments[i];
@@ -57,12 +70,22 @@ const drawing = () => {
 
       segment1.point.y = baseY1 + wiggleY1;
       segment2.point.y = baseY2 + wiggleY2;
+
+      // Draw vertical line only for random indices
+      if (randomIndices.includes(i)) {
+        const verticalLine = new Paper.Path.Line({
+          from: segment1.point,
+          to: segment2.point,
+          strokeWidth: 6,
+          strokeColor: [0.8],
+        });
+        verticalLines.addChild(verticalLine);
+      }
     }
 
     strand1.smooth();
     strand2.smooth();
   };
-
 };
 
 export default drawing;
