@@ -52,7 +52,6 @@ const Callback = () => {
 
             const topSongsObject = await fetchTopTracks(accessToken, timeFrame[active]);
             const topArtistsObject = await fetchTopArtists(accessToken, timeFrame[active]);
-            console.log(topArtistsObject);
 
             if (!topSongsObject) {
                 console.log("An error occurred")
@@ -109,7 +108,7 @@ const Callback = () => {
                 </div>
 
             </div>
-            <SpotifyDNA/>
+            <SpotifyDNA data={topArtists}/>
             <TopTracks dataObj={topSongs} />
         </div>
     );

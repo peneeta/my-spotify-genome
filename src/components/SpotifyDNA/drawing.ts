@@ -1,12 +1,19 @@
 import Paper from 'paper';
 
-const drawing = () => {
+const drawing = (data:any) => {
+  console.log(data)
+
+  data.items.map((artist: { name: any; }) => (
+    console.log(artist.name)
+  ));
+
   Paper.project.clear();
 
   const amplitude = 130;
-  const frequency = 0.01054;
+  const frequency = 0.01255;
   const wiggleAmplitude = 10; // Small amplitude for wiggling
   const wiggleFrequency = 0.01; // Frequency for wiggling
+  const intersectionThreshold = 20; // Threshold to consider points as intersecting
 
   const strand1 = new Paper.Path({
     strokeColor: [0.8],
@@ -66,12 +73,19 @@ const drawing = () => {
       segment2.point.y = baseY2 + wiggleY2;
 
       // Draw vertical line only for evenly spaced indices
-      if (evenlySpacedIndices.includes(i)) {
+      if (
+        evenlySpacedIndices.includes(i) &&
+        Math.abs(segment1.point.y - segment2.point.y) > intersectionThreshold
+      ) {
+        const midpointY = (segment1.point.y + segment2.point.y) / 2;
+        const lineLength = Math.abs(segment1.point.y - segment2.point.y) / 2 * 0.9; // Adjust the line length to be within the wave
+
         const verticalLine = new Paper.Path.Line({
-          from: segment1.point,
-          to: segment2.point,
+          from: new Paper.Point(segment1.point.x, midpointY - lineLength),
+          to: new Paper.Point(segment1.point.x, midpointY + lineLength),
           strokeWidth: 6,
           strokeColor: [0.8],
+          strokeCap: 'round'
         });
         verticalLines.addChild(verticalLine);
       }
@@ -82,4 +96,4 @@ const drawing = () => {
   };
 };
 
-export default drawing;
+export default drawing
