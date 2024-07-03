@@ -1,10 +1,10 @@
 import TrackResult from "./TrackResult";
 
 interface TopTracksProp {
-    dataObj: TopTracksObject;
+    data: TopTracksObject;
 }
 
-export default function TopTracks({ dataObj }:TopTracksProp){
+export default function TopTracks({ data }:TopTracksProp){
 
     return (
         <>
@@ -14,7 +14,7 @@ export default function TopTracks({ dataObj }:TopTracksProp){
             
 
             <div className="flex flex-col justify-center items-start align-center">
-                {dataObj.items.map(track => (
+                {data.items.map(track => (
                     <TrackResult
                         image={track.album.images[2].url}
                         name={track.name}

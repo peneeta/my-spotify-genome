@@ -109,7 +109,7 @@ const Callback = () => {
 
             </div>
             <SpotifyDNA data={topArtists}/>
-            <TopTracks dataObj={topSongs} />
+            <TopTracks data={topSongs} />
         </div>
     );
 };
