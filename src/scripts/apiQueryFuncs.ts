@@ -47,7 +47,6 @@ export async function fetchTopArtists(code: string, time: string) {
     const params = new URLSearchParams();
     params.append("time_range", time);
     params.append("limit", "20");
-    params.append("offset", "5");
 
     try {
         const result = await fetch(`https://api.spotify.com/v1/me/top/artists?${params.toString()}`, {

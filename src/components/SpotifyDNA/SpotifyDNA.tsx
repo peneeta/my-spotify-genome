@@ -48,7 +48,7 @@ const SpotifyDNA: React.FC<CanvasProps> = ({ data, ...canvasProps }) => {
 
   return (
     <div className="flex flex-col items-center justify-center align-center">
-      <canvas ref={canvasRef} {...canvasProps} id="canvas" style={{ width: '100%', height: '100%' }} />
+      <canvas ref={canvasRef} {...canvasProps} id="canvas" style={{ width: '60rem', height: '40rem' }} />
     </div>
   );
 };

@@ -63,6 +63,7 @@ const Callback = () => {
 
             setTopSongs(topSongsObject)
             setTopArtists(topArtistsObject)
+            console.log(topArtistsObject)
 
         } else {
             console.log("access token was NULL");
@@ -109,7 +110,7 @@ const Callback = () => {
 
             </div>
             <SpotifyDNA data={topArtists}/>
-            <TopTracks data={topSongs} />
+            {/* <TopTracks data={topSongs} /> */}
         </div>
     );
 };
