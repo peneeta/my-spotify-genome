@@ -1,4 +1,5 @@
 import Paper from 'paper';
+import { sortNumbersToSineWave } from './helpers';
 
 const drawing = async (data: any) => {
   Paper.project.clear();
@@ -6,9 +7,8 @@ const drawing = async (data: any) => {
   const amplitude = 120;
   const wiggleAmplitude = 10; // Small amplitude for wiggling
   const wiggleFrequency = 0.01; // Frequency for wiggling
-  const intersectionThreshold = 0; // Threshold to consider points as intersecting
-  const numPeriods = 1.5; // Number of periods (peaks and troughs) to display
-  const fractionOfWidth = 0.58; // Fraction of the width to use for the sine wave
+  const numPeriods = 2; // Number of periods (peaks and troughs) to display
+  const fractionOfWidth = 0.60; // Fraction of the width to use for the sine wave
 
   const strand1 = new Paper.Path({
     strokeColor: [0.8],
@@ -21,9 +21,10 @@ const drawing = async (data: any) => {
     strokeCap: 'round',
   });
 
-  const width = 1300;
+  const width = 1350;
   const height = 640;
   const centerY = height / 2;
+  const offset = 100; // offsets the sin wave so the head and tail look better
 
   const availableWidth = width * fractionOfWidth; // Width available for the sine wave
   const offsetX = (width - availableWidth) / 2; // Calculate the offset to center the drawing
@@ -32,7 +33,7 @@ const drawing = async (data: any) => {
 
   const totalPoints = Math.floor(availableWidth); // Total points to cover the desired width
 
-  for (let x = 0; x < totalPoints; x += 1) {
+  for (let x = -offset; x < totalPoints-offset; x += 1) {
     const xPos = (x / totalPoints) * availableWidth + offsetX; // Adjust xPos by adding offsetX
     const y1 = centerY - Math.sin(x * frequency) * amplitude; // Inverse sine wave
     const y2 = centerY + Math.sin(x * frequency) * amplitude;
@@ -47,52 +48,57 @@ const drawing = async (data: any) => {
   // Create a group to hold the vertical lines
   const verticalLines = new Paper.Group();
 
-  // Function to find the intersection points of the two sine waves
-  const findIntersections = (): number[] => {
-    const intersections: number[] = [];
-    for (let x = 0; x < totalPoints - 1; x++) {
-      const y1_1 = centerY - Math.sin(x * frequency) * amplitude;
-      const y1_2 = centerY - Math.sin((x + 1) * frequency) * amplitude;
-
-      const y2_1 = centerY + Math.sin(x * frequency) * amplitude;
-      const y2_2 = centerY + Math.sin((x + 1) * frequency) * amplitude;
-
-      // Check if the lines between these points intersect
-      if ((y1_1 > y2_1 && y1_2 < y2_2) || (y1_1 < y2_1 && y1_2 > y2_2)) {
-        intersections.push(x);
-      }
-    }
-    return intersections;
-  };
-
-  const intersections = findIntersections();
-
-  // Function to get evenly spaced indices between intersection points
-  const getEvenlySpacedIndices = (numIndices: number, intersections: number[]): number[] => {
+  // Function to get evenly spaced indices between start and end points
+  const getEvenlySpacedIndices = (numIndices: number, start: number, end: number): number[] => {
     const indices: number[] = [];
-    const numSections = intersections.length - 1;
-    const totalLinesPerSection = Math.floor(numIndices / numSections);
-
-    for (let i = 0; i < numSections; i++) {
-      const start = intersections[i];
-      const end = intersections[i + 1];
-      const step = Math.floor((end - start) / totalLinesPerSection);
-      for (let j = 0; j < totalLinesPerSection; j++) {
-        indices.push(start + j * step);
+    const totalRange = end - start;
+    let mainStep = totalRange / (numIndices - 1);
+  
+    const specialSteps = [0, 1, 7, 13, 19, 20];
+    const specialStepMultiplier = 2.8; // Adjust this multiplier to increase the step value for special indices
+    const regularStepMultiplier = 0.5; // Adjust this multiplier to decrease the step value for regular indices
+  
+    for (let i = 0; i < numIndices; i++) {
+      let step = mainStep;
+      
+      if (specialSteps.includes(i)) {
+        step *= specialStepMultiplier;
+      } else {
+        step *= regularStepMultiplier;
+      }
+      
+      if (i === 0) {
+        indices.push(start);
+      } else {
+        const prevIndex = indices[indices.length - 1];
+        const newIndex = prevIndex + step;
+        if (newIndex > end) {
+          indices.push(end);
+        } else {
+          indices.push(Math.round(newIndex));
+        }
       }
     }
-
+  
     return indices;
   };
+  
+  
 
   // Number of vertical lines per peak/trough
   const totalLines = 20;
 
+  // Manually set start and end points
+  const start = 50; // Replace with your desired start point
+  const end = totalPoints - 50; // Replace with your desired end point
+
   // Initial evenly spaced indices for vertical lines
-  const evenlySpacedIndices = getEvenlySpacedIndices(totalLines, intersections);
+  const evenlySpacedIndices = getEvenlySpacedIndices(totalLines, start, end);
 
   // Extract heights from the JSON data
-  const heights = await data.items.map((item: { popularity: any }) => item.popularity);
+  const rawHeights = await data.items.map((item: { popularity: any }) => item.popularity);
+
+  const heights = sortNumbersToSineWave(rawHeights);
 
   // Animate the paths to create the wiggling effect
   Paper.view.onFrame = (event: any) => {
@@ -114,13 +120,10 @@ const drawing = async (data: any) => {
       segment2.point.y = baseY2 + wiggleY2;
 
       // Draw vertical line only for evenly spaced indices
-      if (
-        evenlySpacedIndices.includes(i) &&
-        Math.abs(segment1.point.y - segment2.point.y) > intersectionThreshold
-      ) {
+      if (evenlySpacedIndices.includes(i)) {
         const midpointY = (segment1.point.y + segment2.point.y) / 2;
         const lineIndex = evenlySpacedIndices.indexOf(i);
-        const lineHeight = heights[lineIndex]; // Use the height from the JSON data
+        const lineHeight = heights[lineIndex] || 50; // Use the height from the JSON data, default to 50 if not available
 
         const verticalLine = new Paper.Path.Line({
           from: new Paper.Point(segment1.point.x, midpointY - lineHeight / 2),
@@ -142,8 +145,8 @@ const drawing = async (data: any) => {
     const viewScale = Paper.view.size.width / width;
     const viewCenter = Paper.view.center;
     const viewMatrix = new Paper.Matrix();
-    viewMatrix.translate(viewCenter.subtract(new Paper.Point(width / 2, height / 2)));
-    viewMatrix.scale(viewScale, viewScale, new Paper.Point(width / 2, height / 2));
+    viewMatrix.translate(viewCenter.subtract(new Paper.Point((width /2) - offset, height / 2)));
+    viewMatrix.scale(viewScale, viewScale, new Paper.Point((width / 2) - offset, height / 2));
     Paper.view.matrix = viewMatrix;
   };
 
