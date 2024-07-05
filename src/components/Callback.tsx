@@ -8,6 +8,7 @@ import TopTracks from "./TopTracks";
 import SelectorButton from "./SelectorButton";
 import SpotifyDNA from "./SpotifyDNA/SpotifyDNA";
 import Stats from "./Stats";
+import Footer from "./Footer";
 
 const Callback = () => {
 
@@ -117,11 +118,10 @@ const Callback = () => {
                 <p className="text-center"style={{maxWidth: "30rem"}}>Your DNA was generated based on your top 20 artists in the selected timeframe. The height of the base pairs represents the artist's popularity.</p>
             </div>
 
-
-            
-            {/* <TopTracks data={topSongs} /> */}
-
             {!loading && <Stats data={topArtists} />}
+            <TopTracks data={topSongs} />
+
+            <Footer/>
         </div>
     );
 };

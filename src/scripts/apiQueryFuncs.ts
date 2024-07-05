@@ -73,7 +73,6 @@ export async function populateUI(profile: UserProfile) {
 Generates a frequency table of genres in TopArtistsObject to be passed into the ChartJS component
 */
 export function countGenres(data: TopArtistsObject) {
-    console.log(data)
     // Flatten the array of genre arrays into a single array of genre strings
     const totalGenres = data.items.map((item: { genres: any}) => item.genres).flat();
 
@@ -101,8 +100,5 @@ export function countGenres(data: TopArtistsObject) {
     
     return genreCount;
 }
-
-
-
 
 

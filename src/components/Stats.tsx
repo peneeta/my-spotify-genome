@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Chart, ChartConfiguration, plugins, registerables } from 'chart.js';
+import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import { countGenres } from '../scripts/apiQueryFuncs';
 
 // Register the necessary components
@@ -22,7 +22,7 @@ export default function Stats({ data }: any) {
     frequencies = sortedIndices.map(index => frequencies[index]);
 
     // Select only the top 5 genres for the legend
-    const topGenres = genres.slice(0, 5);
+    const topGenres = genres.slice(0, 8);
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const chartRef = useRef<Chart | null>(null);
@@ -42,7 +42,6 @@ export default function Stats({ data }: any) {
                                 'rgb(255, 205, 86)',
                                 'rgb(75, 192, 192)',
                                 'rgb(153, 102, 255)',
-                                // Add more colors if needed
                             ],
                             hoverOffset: 4
                         }]
@@ -60,7 +59,9 @@ export default function Stats({ data }: any) {
                                         // Display only the top 5 items in the legend
                                         return topGenres.includes(legendItem.text);
                                         
-                                    }
+                                    },
+                                    color: '#fff',
+                                    boxWidth: 20,
                                 }
                             }
                         }
