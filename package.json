@@ -13,6 +13,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
     "@fortawesome/free-brands-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "chart.js": "^4.4.3",
     "lottie-react": "^2.4.0",
     "paper": "^0.12.17",
     "react": "^18.3.1",

@@ -55,8 +55,8 @@ const drawing = async (data: any) => {
     let mainStep = totalRange / (numIndices - 1);
   
     const specialSteps = [0, 1, 7, 13, 19, 20];
-    const specialStepMultiplier = 2.8; // Adjust this multiplier to increase the step value for special indices
-    const regularStepMultiplier = 0.5; // Adjust this multiplier to decrease the step value for regular indices
+    const specialStepMultiplier = 2.6; // Adjust this multiplier to increase the step value for special indices
+    const regularStepMultiplier = 0.55; // Adjust this multiplier to decrease the step value for regular indices
   
     for (let i = 0; i < numIndices; i++) {
       let step = mainStep;
@@ -83,8 +83,6 @@ const drawing = async (data: any) => {
     return indices;
   };
   
-  
-
   // Number of vertical lines per peak/trough
   const totalLines = 20;
 
@@ -123,7 +121,7 @@ const drawing = async (data: any) => {
       if (evenlySpacedIndices.includes(i)) {
         const midpointY = (segment1.point.y + segment2.point.y) / 2;
         const lineIndex = evenlySpacedIndices.indexOf(i);
-        const lineHeight = heights[lineIndex] || 50; // Use the height from the JSON data, default to 50 if not available
+        const lineHeight = heights[lineIndex] || 0; // Use the height from the JSON data, default to 50 if not available
 
         const verticalLine = new Paper.Path.Line({
           from: new Paper.Point(segment1.point.x, midpointY - lineHeight / 2),

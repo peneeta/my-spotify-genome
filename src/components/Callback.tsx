@@ -7,6 +7,7 @@ import Bokeh from "./Bokeh";
 import TopTracks from "./TopTracks";
 import SelectorButton from "./SelectorButton";
 import SpotifyDNA from "./SpotifyDNA/SpotifyDNA";
+import Stats from "./Stats";
 
 const Callback = () => {
 
@@ -21,8 +22,8 @@ const Callback = () => {
         previous: "",
         total: 0,
     });
-
     const [topArtists, setTopArtists] = useState<TopArtistsObject>();
+    const [loading, setLoading] = useState(true);
 
     const initialLoad = async () => {
         if(!localStorage.getItem("access_token")) {
@@ -39,8 +40,7 @@ const Callback = () => {
 
             const personalData = await fetchProfile(accessToken);
             populateUI(personalData);
-
-            fetchTop();
+            await fetchTop();
         }
     };
 
@@ -63,6 +63,7 @@ const Callback = () => {
 
             setTopSongs(topSongsObject)
             setTopArtists(topArtistsObject)
+            setLoading(false);
             console.log(topArtistsObject)
 
         } else {
@@ -80,11 +81,12 @@ const Callback = () => {
     const [active, setActive] = useState(0);
     const handleButtonClick = async (buttonId: number) => {
         setActive(buttonId);
+        setLoading(true); // Set loading to true when button is clicked
         await fetchTop();
     }
 
     return (
-        <div>
+        <div className="mx-6">
             <Bokeh/>
             <div className="flex flex-col justify-center align-center items-center text-center gap-3 mt-14">
                 <h1>Welcome, <span id="displayName"></span>.</h1>
@@ -110,7 +112,16 @@ const Callback = () => {
 
             </div>
             <SpotifyDNA data={topArtists}/>
+
+            <div className="flex flex-col justify-center align-center items-center my-4">
+                <p className="text-center"style={{maxWidth: "30rem"}}>Your DNA was generated based on your top 20 artists in the selected timeframe. The height of the base pairs represents the artist's popularity.</p>
+            </div>
+
+
+            
             {/* <TopTracks data={topSongs} /> */}
+
+            {!loading && <Stats data={topArtists} />}
         </div>
     );
 };

@@ -1,5 +1,3 @@
-// MODIFY THIS TO SORT POPULARITY SCORES
-
 export function sortNumbersToSineWave(numbers: number[]): number[] {
     // Step 1: Extract the numbers from the JSON object
     //const numbers: number[] = jsonObject.items.popularity;
@@ -26,11 +24,3 @@ export function sortNumbersToSineWave(numbers: number[]): number[] {
 
     return result;
 }
-
-// // Example usage
-// const jsonObject: NumbersObject = {
-//     numbers: [34, 78, 56, 23, 89, 90, 12, 67, 45, 38, 76, 49, 88, 92, 14, 65, 29, 80, 55, 61]
-// };
-
-// const sortedNumbers = sortNumbersToSineWave(jsonObject);
-// console.log(sortedNumbers);

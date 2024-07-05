@@ -45,7 +45,7 @@ export default function Authorization() {
     return (
         <div>
             <Bokeh />
-            <div className="content flex flex-col justify-center align-center items-center text-center px-5" style={{height:"90vh"}}>
+            <div className="content flex flex-col justify-center align-center items-center text-center px-5" style={{height: '100vh'}}>
                 <h1 className="title py-2" style={{letterSpacing:"3px"}}>My Spotify Genome</h1>
                 <h2 className="mb-4" style={{maxWidth: "30rem"}}>Generate musical DNA based on your listening history</h2>
                 <SpinningDNA/>
@@ -61,10 +61,10 @@ export default function Authorization() {
                     <LoginButton text="View Your Genome" clickFunction={handleCallbackClick}/>
                 )}
 
-            </div>
-            <Footer />
-
-            
+                <Footer />
+            </div>    
+             
+              
         </div>
     );
 };
