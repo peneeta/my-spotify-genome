@@ -7,8 +7,9 @@ import Bokeh from "./Bokeh";
 import TopTracks from "./TopTracks";
 import SelectorButton from "./SelectorButton";
 import SpotifyDNA from "./SpotifyDNA/SpotifyDNA";
-import Stats from "./Stats";
+import Stats from "./Doughnut";
 import Footer from "./Footer";
+import TopArtists from "./TopArtists";
 
 const Callback = () => {
 
@@ -23,7 +24,12 @@ const Callback = () => {
         previous: "",
         total: 0,
     });
-    const [topArtists, setTopArtists] = useState<TopArtistsObject>();
+    const [topArtists, setTopArtists] = useState<TopArtistsObject>({
+        href: "",
+        items: [],
+        limit: 0,
+        offset: 0
+    });
     const [loading, setLoading] = useState(true);
 
     const initialLoad = async () => {
@@ -87,7 +93,7 @@ const Callback = () => {
     }
 
     return (
-        <div className="mx-6">
+        <div className="mx-6" style={{overflow:'hidden'}}>
             <Bokeh/>
             <div className="flex flex-col justify-center align-center items-center text-center gap-3 mt-14">
                 <h1>Welcome, <span id="displayName"></span>.</h1>
@@ -118,8 +124,16 @@ const Callback = () => {
                 <p className="text-center"style={{maxWidth: "30rem"}}>Your DNA was generated based on your top 20 artists in the selected timeframe. The height of the base pairs represents the artist's popularity.</p>
             </div>
 
+            {/* ChartJS */}
             {!loading && <Stats data={topArtists} />}
-            <TopTracks data={topSongs} />
+
+            <div className="flex flex-row flex-wrap items-start justify-center align-start gap-10">
+                <TopTracks data={topSongs} />
+
+                <TopArtists data={topArtists} />
+            </div>
+
+
 
             <Footer/>
         </div>

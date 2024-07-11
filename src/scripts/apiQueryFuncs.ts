@@ -77,7 +77,7 @@ export function countGenres(data: TopArtistsObject) {
     const totalGenres = data.items.map((item: { genres: any}) => item.genres).flat();
 
     // Define multi-word genres that should not be split
-    const multiWordGenres = ["hip hop", "electronic dance", "rhythm and blues", "modern rock", "alternative rock", "escape room"];
+    const multiWordGenres = ["hip hop", "electronic dance", "rhythm and blues", "modern rock", "alternative rock", "escape room", "pov: indie"];
 
     // Process the genres
     const splitGenres = totalGenres.flatMap((genre: string) => {

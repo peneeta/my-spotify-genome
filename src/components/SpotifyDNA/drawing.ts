@@ -1,5 +1,5 @@
 import Paper from 'paper';
-import { sortNumbersToSineWave } from './helpers';
+import { generateColors } from './helpers';
 
 const drawing = async (data: any) => {
   Paper.project.clear();
@@ -9,6 +9,9 @@ const drawing = async (data: any) => {
   const wiggleFrequency = 0.01; // Frequency for wiggling
   const numPeriods = 2; // Number of periods (peaks and troughs) to display
   const fractionOfWidth = 0.60; // Fraction of the width to use for the sine wave
+
+  const colors = generateColors();
+  console.log(colors);
 
   const strand1 = new Paper.Path({
     strokeColor: [0.8],
@@ -94,9 +97,7 @@ const drawing = async (data: any) => {
   const evenlySpacedIndices = getEvenlySpacedIndices(totalLines, start, end);
 
   // Extract heights from the JSON data
-  const rawHeights = await data.items.map((item: { popularity: any }) => item.popularity);
-
-  const heights = sortNumbersToSineWave(rawHeights);
+  const heights = await data.items.map((item: { popularity: any }) => item.popularity);
 
   // Animate the paths to create the wiggling effect
   Paper.view.onFrame = (event: any) => {
@@ -127,7 +128,7 @@ const drawing = async (data: any) => {
           from: new Paper.Point(segment1.point.x, midpointY - lineHeight / 2),
           to: new Paper.Point(segment1.point.x, midpointY + lineHeight / 2),
           strokeWidth: 6,
-          strokeColor: [0.8],
+          strokeColor: colors[lineIndex],
           strokeCap: 'round',
         });
         verticalLines.addChild(verticalLine);
