@@ -97,9 +97,9 @@ const Callback = () => {
             <Bokeh/>
             <div className="flex flex-col justify-center align-center items-center text-center gap-3 mt-14">
                 <h1>Welcome, <span id="displayName"></span>.</h1>
-                <h2>Here are your results.</h2>
+                <h2>Here are your results from this month.</h2>
 
-                <div className="time-buttons flex flex-row justify-center items-center align-center gap-6">
+                {/* <div className="time-buttons flex flex-row justify-center items-center align-center gap-6">
                     <SelectorButton 
                         text={"This Week"} 
                         onHandleClick={() => handleButtonClick(0)}
@@ -115,7 +115,7 @@ const Callback = () => {
                         onHandleClick={() => handleButtonClick(2)}
                         isActive={active === 2}
                     />
-                </div>
+                </div> */}
 
             </div>
             <SpotifyDNA data={topArtists}/>
