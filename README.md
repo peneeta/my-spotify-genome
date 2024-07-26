@@ -12,8 +12,8 @@ This project is not currently being hosted, however some screenshots are provide
 
 ## Homepage
 
-![alt text]('/images/homepage.jpg')
+![alt text](images/homepage.jpg)
 
 ## Example Callback
 
-![alt text]('/images/callback_screen.jpg')
+![alt text](images/callback_screen.jpg)
