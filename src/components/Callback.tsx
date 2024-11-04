@@ -9,12 +9,8 @@ import SpotifyDNA from "./SpotifyDNA/SpotifyDNA";
 import Stats from "./Doughnut";
 import Footer from "./Footer";
 import TopArtists from "./TopArtists";
-import { useNavigate } from "react-router-dom";
 
 const Callback = () => {
-    // try this
-    const navigate = useNavigate()
-    navigate("/callback")
 
     const timeFrame = ["short_term", "medium_term", "long_term"]
 
