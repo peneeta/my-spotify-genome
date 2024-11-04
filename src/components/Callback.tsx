@@ -5,7 +5,6 @@ import { fetchProfile, fetchTopArtists, fetchTopTracks, populateUI } from "../sc
 import config from '../config';
 import Bokeh from "./Bokeh";
 import TopTracks from "./TopTracks";
-import SelectorButton from "./SelectorButton";
 import SpotifyDNA from "./SpotifyDNA/SpotifyDNA";
 import Stats from "./Doughnut";
 import Footer from "./Footer";
@@ -85,12 +84,8 @@ const Callback = () => {
     }, []);
 
     // Handle button click
-    const [active, setActive] = useState(0);
-    const handleButtonClick = async (buttonId: number) => {
-        setActive(buttonId);
-        setLoading(true); // Set loading to true when button is clicked
-        await fetchTop();
-    }
+    const [active, _] = useState(0);
+
 
     return (
         <div className="mx-6" style={{overflow:'hidden'}}>
@@ -98,25 +93,6 @@ const Callback = () => {
             <div className="flex flex-col justify-center align-center items-center text-center gap-3 mt-14">
                 <h1>Welcome, <span id="displayName"></span>.</h1>
                 <h2>Here are your results from this month.</h2>
-
-                {/* <div className="time-buttons flex flex-row justify-center items-center align-center gap-6">
-                    <SelectorButton 
-                        text={"This Week"} 
-                        onHandleClick={() => handleButtonClick(0)}
-                        isActive={active === 0}
-                    />
-                    <SelectorButton 
-                        text={"This Month"} 
-                        onHandleClick={() => handleButtonClick(1)}
-                        isActive={active === 1}
-                    />
-                    <SelectorButton 
-                        text={"This Year"} 
-                        onHandleClick={() => handleButtonClick(2)}
-                        isActive={active === 2}
-                    />
-                </div> */}
-
             </div>
             <SpotifyDNA data={topArtists}/>
 
