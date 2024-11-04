@@ -9,8 +9,12 @@ import SpotifyDNA from "./SpotifyDNA/SpotifyDNA";
 import Stats from "./Doughnut";
 import Footer from "./Footer";
 import TopArtists from "./TopArtists";
+import { useNavigate } from "react-router-dom";
 
 const Callback = () => {
+    // try this
+    const navigate = useNavigate()
+    navigate("/callback")
 
     const timeFrame = ["short_term", "medium_term", "long_term"]
 
@@ -56,8 +60,8 @@ const Callback = () => {
 
         if (accessToken) {
 
-            const topSongsObject = await fetchTopTracks(accessToken, timeFrame[active]);
-            const topArtistsObject = await fetchTopArtists(accessToken, timeFrame[active]);
+            const topSongsObject = await fetchTopTracks(accessToken, timeFrame[0]);
+            const topArtistsObject = await fetchTopArtists(accessToken, timeFrame[0]);
 
             if (!topSongsObject) {
                 console.log("An error occurred")
@@ -82,10 +86,6 @@ const Callback = () => {
     useEffect(() => {
         initialLoad();
     }, []);
-
-    // Handle button click
-    const [active, _] = useState(0);
-
 
     return (
         <div className="mx-6" style={{overflow:'hidden'}}>
