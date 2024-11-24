@@ -1,7 +1,5 @@
 # MySpotifyGenome
 
-## Check it out here! https://myspotifygenome.peneeta.com/
-
 This project generates "musical DNA" based on a user's Spotify listening history for this past month, created with React, TypeScript, and Vite.
 
 ## Homepage
